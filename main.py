@@ -8,6 +8,8 @@ import threading
 
 
 aux = 0
+aux2 = 1
+aux3 = 1
 ############
 def print_graph_details(graph):
     print("Nós e seus atributos:")
@@ -75,12 +77,21 @@ def execute_command(command_method):
 
 
 def gameStart():
+    global aux3
+    global aux2
     global aux
     template = cv2.imread('DEAD.png', 0)
-    template2 = cv2.imread('TIME.png', 0)
+    template2 = cv2.imread('TIME.jpg', 0)
     w, h = template.shape[::-1]
 
-
+    print("Imagem2 encontrada na tela!")
+    pyautogui.keyDown('shift')
+    pyautogui.keyDown('f1')
+    pyautogui.keyUp('shift')
+    pyautogui.keyUp('f1')
+    time.sleep(0.5)
+    aux3 = 1
+    aux=1
     time.sleep(5)
     pyautogui.keyDown('k')
     pyautogui.keyUp('k')
@@ -98,23 +109,16 @@ def gameStart():
         loc = np.where(res >= threshold)
         loc2 = np.where(res2 >= threshold)
 
-        if len(loc2[0]) > 0 and aux == 0:
-            print("Imagem2 encontrada na tela!")
-            pyautogui.keyDown('shift')
-            pyautogui.keyDown('f1')
-            pyautogui.keyUp('shift')
-            pyautogui.keyUp('f1')
-            time.sleep(0.5)
-            pyautogui.keyDown('i')
-            pyautogui.keyUp('i')
-            aux=1
+            
 
         if len(loc[0]) > 0:
-            print("Imagem encontrada na tela!")
-            pyautogui.keyDown('f1')
-            pyautogui.keyUp('f1')
-
-        
+            aux3 = 0
+            time.sleep(5)
+            
+            aux3 = 1
+            time.sleep(5)
+            aux2 = 1
+            time.sleep(5)
         pass
 
 game_thread = threading.Thread(target=gameStart)
@@ -140,15 +144,27 @@ while aux == 0:
 pyautogui.keyDown('i')
 pyautogui.keyUp('i')
 while(aux == 1):
+    if aux3 == 0:
+        pyautogui.keyDown('f1')
+        pyautogui.keyUp('f1')
+        time.sleep(5)
+
+    while aux2 == 0:
+        time.sleep(0.00000001)
     
-    command_index = 1  # Exemplo: índice 1 para o comando 'jump'
-    new_state = Comando.execute_command(command_index)
-    node_count += 1
-    print(node_count)
-    next_node = f"{new_state}_{node_count}"
-    G.add_node(next_node)
-    G.add_edge(current_state, next_node, action=Comando.comandos[command_index].__name__)
-    current_state = next_node
+    time.sleep(3)
+    pyautogui.keyDown('k')
+    pyautogui.keyUp('k')
+    
+    while (aux3 == 1):
+        command_index = 1  # Exemplo: índice 1 para o comando 'jump'
+        new_state = Comando.execute_command(command_index)
+        node_count += 1
+        print(node_count)
+        next_node = f"{new_state}_{node_count}"
+        G.add_node(next_node)
+        G.add_edge(current_state, next_node, action=Comando.comandos[command_index].__name__)
+        current_state = next_node
 
     pass
 
